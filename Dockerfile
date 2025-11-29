@@ -39,7 +39,7 @@ COPY --chmod=755 start-mcp.sh /usr/local/bin/start-mcp.sh
 COPY --chmod=644 playwright-config.json /etc/playwright-config.json
 
 # Give pwuser access to the app directory and playwright cache
-RUN chown -R pwuser:pwuser /app /home/pwuser
+RUN mkdir -p /ms-playwright && chown -R pwuser:pwuser /app /home/pwuser /ms-playwright
 
 # Switch to non-root user
 USER pwuser
