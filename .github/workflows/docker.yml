@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/xtr-dev/mcp-playwright-webx11
+          images: ghcr.io/xtr-dev/mcp-playwright-novnc
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}

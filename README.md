@@ -1,4 +1,4 @@
-# Playwright MCP Server with WebX11 Display
+# Playwright MCP Server with noVNC Display
 
 A Docker image that runs the Microsoft Playwright MCP server with a virtual X11 display accessible via noVNC in your web browser.
 
@@ -17,7 +17,7 @@ docker run -d \
   -p 3000:3000 \
   -p 6080:6080 \
   --shm-size=2gb \
-  ghcr.io/xtr-dev/mcp-playwright-webx11:latest
+  ghcr.io/xtr-dev/mcp-playwright-novnc:latest
 ```
 
 Then access:
@@ -60,7 +60,7 @@ Add to your `claude_desktop_config.json`:
 ```yaml
 services:
   playwright-mcp:
-    image: ghcr.io/xtr-dev/mcp-playwright-webx11:latest
+    image: ghcr.io/xtr-dev/mcp-playwright-novnc:latest
     ports:
       - "3000:3000"   # MCP endpoint
       - "6080:6080"   # noVNC web interface
@@ -80,8 +80,8 @@ services:
 ## Building Locally
 
 ```bash
-docker build -t mcp-playwright-webx11 .
-docker run -d -p 3000:3000 -p 6080:6080 --shm-size=2gb mcp-playwright-webx11
+docker build -t mcp-playwright-novnc .
+docker run -d -p 3000:3000 -p 6080:6080 --shm-size=2gb mcp-playwright-novnc
 ```
 
 ## Architecture

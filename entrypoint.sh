@@ -9,7 +9,7 @@ export MCP_PORT=${MCP_PORT:-3000}
 export MCP_BROWSER=${MCP_BROWSER:-chrome}
 export DISPLAY=:99
 
-echo "Starting Playwright MCP with WebX11 display..."
+echo "Starting Playwright MCP with noVNC display..."
 echo "  Screen: ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_DEPTH}"
 echo "  MCP Port: ${MCP_PORT}"
 echo "  Browser: ${MCP_BROWSER}"
