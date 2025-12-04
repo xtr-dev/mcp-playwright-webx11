@@ -116,35 +116,12 @@ echo '{"jsonrpc":"2.0","method":"tools/list","id":1}' | \
 
 ## Architecture
 
-### Persistent Service Architecture
+The setup consists of a single Docker container running:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│              Docker Container (playwright-display)          │
-│                                                             │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌───────────────┐  │
-│  │  Xvfb   │──│ x11vnc  │──│ noVNC   │──│ Web Browser   │  │
-│  │ :99     │  │ :5900   │  │ :6080   │  │ (localhost)   │  │
-│  └────┬────┘  └─────────┘  └─────────┘  └───────────────┘  │
-│       │                                                     │
-│       ▼                                                     │
-│  ┌─────────────────────────────────────┐                   │
-│  │      Playwright MCP Server          │◄── SSE Client     │
-│  │      (Chromium Browser)             │    (:3080/sse)    │
-│  └─────────────────────────────────────┘                   │
-│                                                             │
-│  ┌─────────────────────────────────────┐                   │
-│  │      mcp-proxy Script               │◄── stdio Client   │
-│  │   (stdio ↔ SSE bridge)              │    (on demand)    │
-│  └─────────────────────────────────────┘                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-The architecture consists of:
-
-1. **Persistent Playwright Service**: Runs continuously with Xvfb, noVNC, and the MCP server
-2. **SSE Endpoint**: Direct access at `http://localhost:3080/sse` for SSE-based MCP clients
-3. **stdio Proxy**: On-demand `mcp-proxy` script that bridges stdio to the SSE endpoint for stdio-based MCP clients
+- **Playwright MCP Server** (port 3080): Accepts browser automation commands via SSE or stdio
+- **Chromium Browser**: Runs on a virtual display (Xvfb)
+- **noVNC Web Interface** (port 6080): View the browser in real-time via your web browser
+- **mcp-proxy**: Bridges stdio-based MCP clients to the SSE endpoint
 
 ## Available MCP Tools
 
@@ -169,15 +146,39 @@ Pre-built images are available from GitHub Container Registry:
 ```bash
 # Pull the latest image
 docker pull ghcr.io/xtr-dev/mcp-playwright-novnc:latest
+```
 
-# Use in docker-compose.yml
+### Complete Setup Example
+
+**1. Create a `docker-compose.yml` file:**
+
+```yaml
 services:
   playwright-display:
     image: ghcr.io/xtr-dev/mcp-playwright-novnc:latest
-    # ... rest of configuration
+    container_name: playwright-display
+    ports:
+      - "6080:6080"  # noVNC web interface
+      - "3080:3080"  # MCP SSE endpoint
+    environment:
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1080
+      - MCP_BROWSER=chromium
+    networks:
+      - playwright-network
+
+networks:
+  playwright-network:
+    name: playwright-network
 ```
 
-Or use in your MCP client configuration:
+**2. Start the service:**
+
+```bash
+docker compose up -d
+```
+
+**3. Configure your MCP client:**
 
 ```json
 {
@@ -197,6 +198,10 @@ Or use in your MCP client configuration:
   }
 }
 ```
+
+**4. Access the browser display:**
+
+Open http://localhost:6080 in your web browser to see the Playwright browser in action.
 
 ## License
 
