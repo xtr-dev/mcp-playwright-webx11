@@ -205,4 +205,4 @@ Open http://localhost:6080 in your web browser to see the Playwright browser in 
 
 ## License
 
-Apache License 2.0
+MIT License - see [LICENSE](LICENSE) file for details
